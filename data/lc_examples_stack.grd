@@ -1,0 +1,25 @@
+[general]
+creator=R package 'raster'
+created=2018-06-22 15:49:43
+[georeference]
+nrows=30
+ncols=30
+xmin=0
+ymin=0
+xmax=30
+ymax=30
+projection=NA
+[data]
+datatype=FLT4S
+byteorder=little
+nbands=278
+bandorder=BIL
+minvalue=1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:8:4:7:1:1:1:7:3:3:1:1:1:7:1:1:1:3:1:3:1:1:3:1:1:2:1:1:3:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:2:1:1:1:1:2:1:2:1:1:1:1:1:1:1:1:2:1:2:2:3:3:3:3:3:3:3:3:3:3:3:1:2:1:1:1:1:1:1:1:1:1:1:2:1:1:1:1:2:2:1:1:1:2:2:2:1:2:1:2:2:1:1:2:1:2:2:1:2:1:1:1:1:1:2:1:1:1:1:2:1:2:2:3:3:3:3:3:3:3:1:3:2:2:3:3:2:3:2:1:3:2:2:1:2:2:2:2:1:1:2:2:2:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:2:2:1:2:2:2:2:1:2:1:2:1:2:1:1:2:2:2:1:2:1:2:1:2:2:2:2:2:1:8:8:1:8:7:1:2:2:8:7:1:1:2:1:1:2:1:1:1:1:2:1:2:1:1:2:2:2:1:2:2:2
+maxvalue=2:2:2:5:6:2:2:2:5:5:9:9:6:6:9:9:9:9:3:9:8:9:6:6:9:6:6:6:7:9:9:6:9:8:8:8:8:8:8:8:8:9:8:8:8:8:9:8:9:8:8:9:8:9:8:8:8:8:8:8:8:8:8:2:4:2:2:5:5:2:2:2:6:4:9:2:3:3:9:6:6:3:3:9:8:9:9:9:6:9:9:8:9:6:9:9:9:7:7:7:8:7:8:7:7:7:7:7:8:3:7:7:8:8:6:6:7:9:6:7:8:9:8:8:7:9:9:9:9:6:6:6:6:6:7:6:6:6:6:6:6:6:6:9:6:6:6:6:9:6:7:6:7:6:9:6:6:9:9:7:7:7:7:8:8:7:7:7:8:7:7:7:8:7:7:8:8:8:8:9:9:7:8:7:9:8:8:7:9:9:7:5:9:5:5:7:7:9:9:5:9:9:9:7:9:9:9:9:5:9:5:6:6:5:9:9:9:4:4:7:9:4:4:9:4:9:4:6:6:9:9:9:9:9:9:9:7:9:9:9:9:7:9:8:9:9:9:9:9:9:9:9:9:9:9:9:9:9:9:9:9:9:9:9:9:9:9:9:9:9:9:9:9:9:9:9:9:9
+nodatavalue=-3.4e+38
+[legend]
+legendtype=
+values=
+color=
+[description]
+layername=agriculture.1:agriculture.2:agriculture.3:agriculture.4:agriculture.5:agriculture.6:agriculture.7:agriculture.8:agriculture.9:agriculture.10:agriculture.11:agriculture.12:agriculture.13:agriculture.14:agriculture.15:agriculture.16:agriculture.17:agriculture.18:agriculture.19:agriculture.20:agriculture.21:agriculture.22:agriculture.23:agriculture.24:agriculture.25:agriculture.26:agriculture.27:agriculture.28:agriculture.29:agriculture.30:agriculture.31:agriculture.32:bare.1:bare.2:bare.3:bare.4:bare.5:bare.6:bare.7:bare.8:bare.9:bare.10:bare.11:bare.12:bare.13:bare.14:bare.15:bare.16:bare.17:bare.18:bare.19:bare.20:bare.21:bare.22:bare.23:bare.24:bare.25:bare.26:bare.27:bare.28:bare.29:bare.30:bare.31:forest.1:forest.2:forest.3:forest.4:forest.5:forest.6:forest.7:forest.8:forest.9:forest.10:forest.11:forest.12:forest.13:forest.14:forest.15:forest.16:forest.17:forest.18:forest.19:forest.20:forest.21:forest.22:forest.23:forest.24:forest.25:forest.26:forest.27:forest.28:forest.29:forest.30:forest.31:forest.32:forest.33:forest.34:forest.35:grassland.1:grassland.2:grassland.3:grassland.4:grassland.5:grassland.6:grassland.7:grassland.8:grassland.9:grassland.10:grassland.11:grassland.12:grassland.13:grassland.14:grassland.15:grassland.16:grassland.17:grassland.18:grassland.19:grassland.20:grassland.21:grassland.22:grassland.23:grassland.24:grassland.25:grassland.26:grassland.27:grassland.28:grassland.29:grassland.30:grassland.31:grassland.32:shrubland.1:shrubland.2:shrubland.3:shrubland.4:shrubland.5:shrubland.6:shrubland.7:shrubland.8:shrubland.9:shrubland.10:shrubland.11:shrubland.12:shrubland.13:shrubland.14:shrubland.15:shrubland.16:shrubland.17:shrubland.18:shrubland.19:shrubland.20:shrubland.21:shrubland.22:shrubland.23:shrubland.24:shrubland.25:shrubland.26:shrubland.27:shrubland.28:shrubland.29:shrubland.30:shrubland.31:sparse.1:sparse.2:sparse.3:sparse.4:sparse.5:sparse.6:sparse.7:sparse.8:sparse.9:sparse.10:sparse.11:sparse.12:sparse.13:sparse.14:sparse.15:sparse.16:sparse.17:sparse.18:sparse.19:sparse.20:sparse.21:sparse.22:sparse.23:sparse.24:sparse.25:sparse.26:sparse.27:sparse.28:sparse.29:sparse.30:urban.1:urban.2:urban.3:urban.4:urban.5:urban.6:urban.7:urban.8:urban.9:urban.10:urban.11:urban.12:urban.13:urban.14:urban.15:urban.16:urban.17:urban.18:urban.19:urban.20:urban.21:urban.22:urban.23:urban.24:urban.25:urban.26:wetland.1:wetland.2:wetland.3:wetland.4:wetland.5:wetland.6:wetland.7:wetland.8:wetland.9:wetland.10:wetland.11:wetland.12:wetland.13:wetland.14:wetland.15:wetland.16:wetland.17:wetland.18:wetland.19:wetland.20:wetland.21:wetland.22:wetland.23:wetland.24:wetland.25:wetland.26:wetland.27:wetland.28:wetland.29:water.1:water.2:water.3:water.4:water.5:water.6:water.7:water.8:water.9:water.10:water.11:water.12:water.13:water.14:water.15:water.16:water.17:water.18:water.19:water.20:water.21:water.22:water.23:water.24:water.25:water.26:water.27:water.28:water.29:water.30:water.31:water.32
