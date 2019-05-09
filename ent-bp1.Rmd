@@ -1,8 +1,8 @@
 ---
-title: "Efficient landscape metrics calculations for buffers around sampling points"
-date: '2019-03-23'
+title: "..."
+date: "2019-05-23"
 draft: yes
-slug: landscapemetrics-bp
+slug: ent-bp1
 tags:
 - spatial
 - geocompr
