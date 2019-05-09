@@ -13,7 +13,7 @@ categories: []
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
 ```
 
 <!--intro-->
@@ -23,29 +23,28 @@ knitr::opts_chunk$set(echo = TRUE)
 <!-- prep -->
 <!--adds data download-->
 ```{r}
-library(landscapemetrics)
 library(raster)
 all_examples_stack = stack("data/lc_examples_stack.grd")
 forest_examples = all_examples_stack[[grep("forest", names(all_examples_stack))]]
+forest_examples = subset(forest_examples, c(1, 13, 30, 34))
 ```
 
 <!--maybe select less examples?? (2?4?8?9?) -->
 
 ```{r}
-lc_palette = c("#FFFF64",
-               "#006400",
-               "#BE9600",
-               "#00DC82",
-               "#C31400",
-               "#966400",
-               "#FFDCD2",
-               "#FFF5D7",
-               "#0046C8")
+lc_palette = c("#FFFF64", "#006400", "#BE9600", "#00DC82", "#C31400",
+               "#966400", "#FFDCD2", "#FFF5D7", "#0046C8")
 
 library(tmap)
 tm_shape(forest_examples) +
   tm_raster(palette = lc_palette, style = "cat") +
-  tm_facets(free.scales = FALSE)
+  tm_facets(free.scales = FALSE) +
+  tm_layout(panel.labels = as.character(seq_len(raster::nlayers(forest_examples))))
+```
+
+```{r}
+library(landscapemetrics)
+get_adjacencies(forest_examples)
 ```
 
 
@@ -54,30 +53,75 @@ tm_shape(forest_examples) +
 ## Marginal entropy
 
 ```{r}
-lsm_l_ent(forest_examples)
+mar_ent = lsm_l_ent(forest_examples)
+mar_ent
+```
+
+```{r}
+tm_shape(forest_examples) +
+  tm_raster(palette = lc_palette, style = "cat") +
+  tm_facets(free.scales = FALSE) +
+  tm_layout(panel.labels = round(mar_ent$value, 2))
 ```
 
 ## Conditional entropy
 
 ```{r}
-lsm_l_condent(forest_examples)
+cond_ent = lsm_l_condent(forest_examples)
+cond_ent
+```
+
+```{r}
+tm_shape(forest_examples) +
+  tm_raster(palette = lc_palette, style = "cat") +
+  tm_facets(free.scales = FALSE) +
+  tm_layout(panel.labels = round(cond_ent$value, 2))
 ```
 
 ## Joint entropy
 
 ```{r}
-lsm_l_joinent(forest_examples)
+join_ent = lsm_l_joinent(forest_examples)
+```
+
+```{r}
+tm_shape(forest_examples) +
+  tm_raster(palette = lc_palette, style = "cat") +
+  tm_facets(free.scales = FALSE) +
+  tm_layout(panel.labels = round(join_ent$value, 2))
 ```
 
 ## Mutual information
 
 ```{r}
-lsm_l_mutinf(forest_examples)
+mut_inf = lsm_l_mutinf(forest_examples)
+mut_inf
+```
+
+```{r}
+tm_shape(forest_examples) +
+  tm_raster(palette = lc_palette, style = "cat") +
+  tm_facets(free.scales = FALSE) +
+  tm_layout(panel.labels = round(mut_inf$value, 2))
 ```
 
 ## Relative mutual information
 
-??
+<!-- Note that for real-life landscapes the value of I(x, y) tends to grow with -->
+<!-- a diversity of the landscape due to the spatial autocorrelation. The relative -->
+<!-- mutual information, U = I(y, x)/H(y), often referred to as an uncertainty -->
+<!-- coefficient, adjusts this tendency and has always a range between 0 and 1. -->
+
+```{r}
+rel_mut_inf = lsm_l_mutinf(forest_examples)$value / lsm_l_ent(forest_examples)$value
+```
+
+```{r}
+tm_shape(forest_examples) +
+  tm_raster(palette = lc_palette, style = "cat") +
+  tm_facets(free.scales = FALSE) +
+  tm_layout(panel.labels = round(rel_mut_inf, 2))
+```
 
 # Application
 
