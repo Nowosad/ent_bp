@@ -1,0 +1,94 @@
+---
+title: "Efficient landscape metrics calculations for buffers around sampling points"
+date: '2019-03-23'
+draft: yes
+slug: landscapemetrics-bp
+tags:
+- spatial
+- geocompr
+- sil
+- rstats
+- landscape-ecology
+categories: []
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<!--intro-->
+<!--cooccurence histogram??-->
+<!-- landscapemetrics -->
+
+<!-- prep -->
+<!--adds data download-->
+```{r}
+library(landscapemetrics)
+library(raster)
+all_examples_stack = stack("data/lc_examples_stack.grd")
+forest_examples = all_examples_stack[[grep("forest", names(all_examples_stack))]]
+```
+
+<!--maybe select less examples?? (2?4?8?9?) -->
+
+```{r}
+lc_palette = c("#FFFF64",
+               "#006400",
+               "#BE9600",
+               "#00DC82",
+               "#C31400",
+               "#966400",
+               "#FFDCD2",
+               "#FFF5D7",
+               "#0046C8")
+
+library(tmap)
+tm_shape(forest_examples) +
+  tm_raster(palette = lc_palette, style = "cat") +
+  tm_facets(free.scales = FALSE)
+```
+
+
+# ...
+
+## Marginal entropy
+
+```{r}
+lsm_l_ent(forest_examples)
+```
+
+## Conditional entropy
+
+```{r}
+lsm_l_condent(forest_examples)
+```
+
+## Joint entropy
+
+```{r}
+lsm_l_joinent(forest_examples)
+```
+
+## Mutual information
+
+```{r}
+lsm_l_mutinf(forest_examples)
+```
+
+## Relative mutual information
+
+??
+
+# Application
+
+## Order
+
+## Classify
+
+# Summary
+
+<!-- landscapemetrics -->
+<!-- + the whole org -->
+
+<!-- new paper -->
+<!-- + the whole sil org -->
