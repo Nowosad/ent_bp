@@ -5,7 +5,7 @@ draft: yes
 slug: ent-bp1
 output:
   html_document:
-    code_folding: hide
+    code_folding: show
 tags:
 - spatial
 - geocompr
@@ -16,7 +16,10 @@ categories: []
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE, fig.width = 10)
+knitr::opts_chunk$set(echo = TRUE, 
+                      warning = FALSE, 
+                      fig.width = 10,
+                      fig.height = 2.5)
 ```
 
 > Nowosad, J., and T. F. Stepinski. "Information Theory as a consistent framework for quantification and classification of landscape patterns". Landscape Ecology, DOI: 10.1007/s10980-019-00830-x
@@ -31,7 +34,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, fig.width = 10)
 library(raster)
 all_examples_stack = stack("data/lc_examples_stack.grd")
 forest_examples = all_examples_stack[[grep("forest", names(all_examples_stack))]]
-forest_examples = subset(forest_examples, c(16, 5, 1, 13, 26, 35))
+forest_examples = subset(forest_examples, c(5, 16, 1, 13, 26, 35))
 # forest_examples = forest_examples[[c(1, 13, 26, 35)]]
 forest_examples[[1]][] = ifelse(forest_examples[[1]][] != 2, 1, forest_examples[[1]][])
 forest_examples[[2]][] = ifelse(forest_examples[[2]][] != 2, 1, forest_examples[[2]][])
@@ -52,13 +55,18 @@ tm_shape(all_examples_stack[[grep("forest", names(all_examples_stack))]]) +
 
 # Example data
 
-Let's consider six fairly simple, but diverse examples.
-<!--adds data download-->
 
+<!--adds data download-->
+Let's consider six fairly simple, but diverse examples:
+
+1. One dominating category and second spatially aggregated minor category
+2. One dominating category and second spatially disaggregated minor category
+3. One less dominating category and second spatially aggregated minor category
+4. One less dominating category and second spatially disaggregated minor category
+5. Four categories, where each one is spatially aggregated
+6. Four categories, where each one is spatially disaggregated
 
 ```{r}
-# lc_palette = c("#FFFF64", "#006400", "#BE9600", "#00DC82", "#C31400",
-#                "#966400", "#FFDCD2", "#FFF5D7", "#0046C8")
 lc_palette = c("#FFFF64", "#006400", "#966400", "#BE9600")
 
 library(tmap)
@@ -71,23 +79,48 @@ tm_shape(landscapes) +
             legend.outside.position = "bottom")
 ```
 
-# Adjacencies
+<!-- this is only a simplification, but the ideas below works for more and less complex cases -->
+
+# Spatial represetation
+
+One of the ways to desribe the above examples is to count a number of cells for each category (this metrics is known as a composition).
+Hovewer this representation does not contain any information about spatial distribution of the values.
+For example, let's consider example data 1 and 2 -- they both have very similar number of cells for each category, but the spatial arrangement of the values is very different.
+
+Another way to represent the above example is to calculate a co-occurrence matrix.^[Another name for this representation is the adjacency matrix.]
+It is created by counting all of the pairs of the adjacent cells in the data.
+As you will see below, this representation describes not only a composition, but also a spatial configuration of the values.
+
+[The **landscapemetrics** package](https://r-spatialecology.github.io/landscapemetrics/index.html) allows for calculating co-occurrence matrices using the `get_adjacencies()` function.
 
 ```{r}
 library(landscapemetrics)
 get_adjacencies(landscapes)
 ```
 
-# ...
+The result for each example dataset is a matrix with a number of rows and columns equal to the number of unique categories in the dataset.
+For example data 1, 200 times cells of the first category are adjacent to another cells of this category, 3180 times cells of the second category are adjacent to another cells of this category, and 50 times cells of the first category are adjacent to cells of the second category.
+This representation shows that the second category dominates in the data (3180 pairs), but also that the cells from the first category are more often next to another cells of this category than a different one (200 vs 50).
 
-## Marginal entropy
+# Information theory
+
+<!-- ... -->
+
+## Marginal entropy [H(x)]
+
+The first metric, marginal entropy, represents a diversity (thematic complexity, configuration) of spatial categories.
+It is calculated as an entropy of marginal distribution.
+The `lsm_l_ent` function allows for calculating marginal entropy.
+Its output gives a layer number (example data id), informs that the data is only of the landscape level, this metric abbriviation is `ent`, and finally it shows the resulting value.
 
 ```{r}
 mar_ent = lsm_l_ent(landscapes)
 mar_ent
 ```
 
-```{r}
+<!-- The values can be vizualized together with spatial data using the **tmap** package. -->
+
+```{r, echo=FALSE}
 tm_shape(landscapes) +
   tm_raster(palette = lc_palette, style = "cat", legend.show = FALSE) +
   tm_facets(free.scales = FALSE, ncol = 6) +
@@ -96,14 +129,22 @@ tm_shape(landscapes) +
             main.title = "Marginal entropy [H(x)]")
 ```
 
+The resulting values indicates that the example datasets have different levels of thematic complexity.
+Example data 1 and 2 have one dominating category (low values of marginal entropy), while categories are more evenly distributed in example data 3 and 4 (medium values of marginal entropy).
+Example data 5 and 6 have the highest levels of thematic complexity due to the fact of having more unique, evenly distributed categories.
+
 ## Conditional entropy
+
+The second metric, conditional entropy, represents a configurational complexity (geometric intricacy) of a spatial pattern. 
+<!-- ... -->
+Conditional entropy can be calculated using the `lsm_l_condent` function.
 
 ```{r}
 cond_ent = lsm_l_condent(landscapes)
 cond_ent
 ```
 
-```{r}
+```{r, echo=FALSE}
 tm_shape(landscapes) +
   tm_raster(palette = lc_palette, style = "cat", legend.show = FALSE) +
   tm_facets(free.scales = FALSE, ncol = 6) +
@@ -112,14 +153,21 @@ tm_shape(landscapes) +
             main.title = "Conditional entropy [H(y|x)]")
 ```
 
+<!-- interpretation -->
+<!-- ... -->
+
 ## Joint entropy
+
+The third metric, joint entropy, is an overall spatio-thematic complexity metric. 
+<!-- ... -->
+You can use the `lsm_l_joinent()` to calculate this metric.
 
 ```{r}
 join_ent = lsm_l_joinent(landscapes)
 join_ent
 ```
 
-```{r}
+```{r, echo=FALSE}
 tm_shape(landscapes) +
   tm_raster(palette = lc_palette, style = "cat", legend.show = FALSE) +
   tm_facets(free.scales = FALSE, ncol = 6) +
@@ -128,14 +176,22 @@ tm_shape(landscapes) +
             main.title = "Joint entropy [H(x, y)]")
 ```
 
+<!-- interpretation -->
+<!-- ... -->
+
 ## Mutual information
+
+The fourth metric, mutual entropy, quantifies the information that one cell in a pair provides about the other cell in a pair.
+It disambiguates landscape pattern types characterize by the same value of an overall complexity.
+<!-- ... -->
+The `lsm_l_mutinf()` function calculates mutual entropy.
 
 ```{r}
 mut_inf = lsm_l_mutinf(landscapes)
 mut_inf
 ```
 
-```{r}
+```{r, echo=FALSE}
 tm_shape(landscapes) +
   tm_raster(palette = lc_palette, style = "cat", legend.show = FALSE) +
   tm_facets(free.scales = FALSE, ncol = 6) +
@@ -144,19 +200,21 @@ tm_shape(landscapes) +
             main.title = "Mutual information [H(x)]")
 ```
 
+<!-- interpretation -->
+<!-- ... -->
+
 ## Relative mutual information
 
-<!-- Note that for real-life landscapes the value of I(x, y) tends to grow with -->
-<!-- a diversity of the landscape due to the spatial autocorrelation. The relative -->
-<!-- mutual information, U = I(y, x)/H(y), often referred to as an uncertainty -->
-<!-- coefficient, adjusts this tendency and has always a range between 0 and 1. -->
+Due to the spatial autocorrelation, the value of mutual information tends to grow with a diversity of the landscape (marginal entropy).
+To adjust this tendency, it is possible to calculate relative mutual information by dividing the mutual information by the marginal entropy.
+Relative mutual information always has a range between 0 and 1.
 
 ```{r}
 rel_mut_inf = lsm_l_mutinf(landscapes)$value / lsm_l_ent(landscapes)$value
 rel_mut_inf
 ```
 
-```{r}
+```{r, echo=FALSE}
 tm_shape(landscapes) +
   tm_raster(palette = lc_palette, style = "cat", legend.show = FALSE) +
   tm_facets(free.scales = FALSE, ncol = 6) +
@@ -165,11 +223,13 @@ tm_shape(landscapes) +
             main.title = "Relative mutual information [U]")
 ```
 
-# Application
+<!-- interpretation -->
+<!-- ... -->
 
-## Order
+# Applications
 
-## Classify
+<!-- order -->
+<!-- classify -->
 
 # Summary
 
@@ -177,4 +237,5 @@ tm_shape(landscapes) +
 <!-- + the whole org -->
 
 <!-- new paper -->
+<!-- summary of the paper -->
 <!-- + the whole sil org -->
