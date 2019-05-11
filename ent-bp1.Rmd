@@ -1,8 +1,11 @@
 ---
-title: "..."
+title: "Information theory provides a consistent framework for the analysis of spatial patterns"
 date: "2019-05-23"
 draft: yes
 slug: ent-bp1
+output:
+  html_document:
+    code_folding: hide
 tags:
 - spatial
 - geocompr
@@ -13,8 +16,10 @@ categories: []
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, fig.width = 10)
 ```
+
+> Nowosad, J., and T. F. Stepinski. "Information Theory as a consistent framework for quantification and classification of landscape patterns". Landscape Ecology, DOI: 10.1007/s10980-019-00830-x
 
 <!--intro-->
 <!--cooccurence histogram??-->
@@ -22,87 +27,121 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
 
 <!-- prep -->
 <!--adds data download-->
-```{r}
+```{r, message=FALSE}
 library(raster)
 all_examples_stack = stack("data/lc_examples_stack.grd")
 forest_examples = all_examples_stack[[grep("forest", names(all_examples_stack))]]
-forest_examples = subset(forest_examples, c(1, 13, 30, 34))
+forest_examples = subset(forest_examples, c(16, 5, 1, 13, 26, 35))
+# forest_examples = forest_examples[[c(1, 13, 26, 35)]]
+forest_examples[[1]][] = ifelse(forest_examples[[1]][] != 2, 1, forest_examples[[1]][])
+forest_examples[[2]][] = ifelse(forest_examples[[2]][] != 2, 1, forest_examples[[2]][])
+forest_examples[[5]][] = ifelse(forest_examples[[5]][] != 6, forest_examples[[5]][], 4)
+forest_examples[[6]][] = ifelse(forest_examples[[6]][] != 2, forest_examples[[6]][] - 3, forest_examples[[6]][])
+landscapes = brick(forest_examples)
 ```
 
-<!--maybe select less examples?? (2?4?8?9?) -->
 
-```{r}
-lc_palette = c("#FFFF64", "#006400", "#BE9600", "#00DC82", "#C31400",
-               "#966400", "#FFDCD2", "#FFF5D7", "#0046C8")
-
+```{r, eval=FALSE, echo=FALSE}
 library(tmap)
-tm_shape(forest_examples) +
+tmap_mode("plot")
+tm_shape(all_examples_stack[[grep("forest", names(all_examples_stack))]]) +
   tm_raster(palette = lc_palette, style = "cat") +
   tm_facets(free.scales = FALSE) +
   tm_layout(panel.labels = as.character(seq_len(raster::nlayers(forest_examples))))
 ```
 
+# Example data
+
+Let's consider six fairly simple, but diverse examples.
+<!--adds data download-->
+
+
 ```{r}
-library(landscapemetrics)
-get_adjacencies(forest_examples)
+# lc_palette = c("#FFFF64", "#006400", "#BE9600", "#00DC82", "#C31400",
+#                "#966400", "#FFDCD2", "#FFF5D7", "#0046C8")
+lc_palette = c("#FFFF64", "#006400", "#966400", "#BE9600")
+
+library(tmap)
+tm_shape(landscapes) +
+  tm_raster(palette = lc_palette, style = "cat",
+            title = "Land cover category", 
+            labels = c("Argiculture", "Forest", "Shrubland", "Grassland")) +
+  tm_facets(free.scales = FALSE, ncol = 6) +
+  tm_layout(panel.labels = seq_len(raster::nlayers(landscapes)),
+            legend.outside.position = "bottom")
 ```
 
+# Adjacencies
+
+```{r}
+library(landscapemetrics)
+get_adjacencies(landscapes)
+```
 
 # ...
 
 ## Marginal entropy
 
 ```{r}
-mar_ent = lsm_l_ent(forest_examples)
+mar_ent = lsm_l_ent(landscapes)
 mar_ent
 ```
 
 ```{r}
-tm_shape(forest_examples) +
-  tm_raster(palette = lc_palette, style = "cat") +
-  tm_facets(free.scales = FALSE) +
-  tm_layout(panel.labels = round(mar_ent$value, 2))
+tm_shape(landscapes) +
+  tm_raster(palette = lc_palette, style = "cat", legend.show = FALSE) +
+  tm_facets(free.scales = FALSE, ncol = 6) +
+  tm_layout(panel.labels = round(mar_ent$value, 2), 
+            panel.label.size = 2,
+            main.title = "Marginal entropy [H(x)]")
 ```
 
 ## Conditional entropy
 
 ```{r}
-cond_ent = lsm_l_condent(forest_examples)
+cond_ent = lsm_l_condent(landscapes)
 cond_ent
 ```
 
 ```{r}
-tm_shape(forest_examples) +
-  tm_raster(palette = lc_palette, style = "cat") +
-  tm_facets(free.scales = FALSE) +
-  tm_layout(panel.labels = round(cond_ent$value, 2))
+tm_shape(landscapes) +
+  tm_raster(palette = lc_palette, style = "cat", legend.show = FALSE) +
+  tm_facets(free.scales = FALSE, ncol = 6) +
+  tm_layout(panel.labels = round(cond_ent$value, 2), 
+            panel.label.size = 2,
+            main.title = "Conditional entropy [H(y|x)]")
 ```
 
 ## Joint entropy
 
 ```{r}
-join_ent = lsm_l_joinent(forest_examples)
+join_ent = lsm_l_joinent(landscapes)
+join_ent
 ```
 
 ```{r}
-tm_shape(forest_examples) +
-  tm_raster(palette = lc_palette, style = "cat") +
-  tm_facets(free.scales = FALSE) +
-  tm_layout(panel.labels = round(join_ent$value, 2))
+tm_shape(landscapes) +
+  tm_raster(palette = lc_palette, style = "cat", legend.show = FALSE) +
+  tm_facets(free.scales = FALSE, ncol = 6) +
+  tm_layout(panel.labels = round(join_ent$value, 2), 
+            panel.label.size = 2,
+            main.title = "Joint entropy [H(x, y)]")
 ```
 
 ## Mutual information
 
 ```{r}
-mut_inf = lsm_l_mutinf(forest_examples)
+mut_inf = lsm_l_mutinf(landscapes)
 mut_inf
 ```
 
 ```{r}
-tm_shape(forest_examples) +
-  tm_raster(palette = lc_palette, style = "cat") +
-  tm_facets(free.scales = FALSE) +
-  tm_layout(panel.labels = round(mut_inf$value, 2))
+tm_shape(landscapes) +
+  tm_raster(palette = lc_palette, style = "cat", legend.show = FALSE) +
+  tm_facets(free.scales = FALSE, ncol = 6) +
+  tm_layout(panel.labels = round(mut_inf$value, 2), 
+            panel.label.size = 2,
+            main.title = "Mutual information [H(x)]")
 ```
 
 ## Relative mutual information
@@ -113,14 +152,17 @@ tm_shape(forest_examples) +
 <!-- coefficient, adjusts this tendency and has always a range between 0 and 1. -->
 
 ```{r}
-rel_mut_inf = lsm_l_mutinf(forest_examples)$value / lsm_l_ent(forest_examples)$value
+rel_mut_inf = lsm_l_mutinf(landscapes)$value / lsm_l_ent(landscapes)$value
+rel_mut_inf
 ```
 
 ```{r}
-tm_shape(forest_examples) +
-  tm_raster(palette = lc_palette, style = "cat") +
-  tm_facets(free.scales = FALSE) +
-  tm_layout(panel.labels = round(rel_mut_inf, 2))
+tm_shape(landscapes) +
+  tm_raster(palette = lc_palette, style = "cat", legend.show = FALSE) +
+  tm_facets(free.scales = FALSE, ncol = 6) +
+  tm_layout(panel.labels = round(rel_mut_inf, 2), 
+            panel.label.size = 2,
+            main.title = "Relative mutual information [U]")
 ```
 
 # Application
