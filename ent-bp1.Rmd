@@ -29,7 +29,7 @@ Each example is accompanied by an R code allowing for reproducing these results 
 <!-- a comprehensive, theory-driven approach to analysis of landscape patterns -->
 To learn more about this topic, read our open access article:
 
-> Nowosad, J., and T. F. Stepinski. "Information Theory as a consistent framework for quantification and classification of landscape patterns". Landscape Ecology, DOI: 10.1007/s10980-019-00830-x
+> Nowosad, J., and T. F. Stepinski. (2019). Information Theory as a consistent framework for quantification and classification of landscape patterns. Landscape Ecology, DOI: 10.1007/s10980-019-00830-x
 
 ```{r, message=FALSE, echo=FALSE}
 library(raster)
