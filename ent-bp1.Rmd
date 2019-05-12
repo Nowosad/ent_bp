@@ -22,14 +22,11 @@ knitr::opts_chunk$set(echo = TRUE,
                       fig.height = 2.5)
 ```
 
-<!--intro-->
-<!-- information theory -->
-<!-- landscape metrics -->
-<!-- landscapemetrics -->
+Quantitative assessment of spatial patterns has been a keen interest of generations of spatial scientists and practitioners using spatial data.
+This post describes Information Theory-based metrics allowing for numerical description of spatial patterns. 
+Each example is accompanied by an R code allowing for reproducing these results and encouraging to try these metrics on different data.
 
-<!-- prep -->
-<!--adds data download-->
-
+<!-- a comprehensive, theory-driven approach to analysis of landscape patterns -->
 To learn more about this topic, read our open access article:
 
 > Nowosad, J., and T. F. Stepinski. "Information Theory as a consistent framework for quantification and classification of landscape patterns". Landscape Ecology, DOI: 10.1007/s10980-019-00830-x
@@ -61,18 +58,15 @@ tm_shape(all_examples_stack[[grep("forest", names(all_examples_stack))]]) +
 
 <!--adds data download-->
 
-
 ```{r}
-lc_palette = c("#FFFF64", "#006400", "#966400", "#BE9600")
-
 library(tmap)
 tm_shape(landscapes) +
-  tm_raster(palette = lc_palette, style = "cat",
+  tm_raster(palette = c("#FFFF64", "#006400", "#966400", "#BE9600"), 
+            style = "cat",
             title = "Land cover category", 
             labels = c("Argiculture", "Forest", "Shrubland", "Grassland")) +
-  tm_facets(free.scales = FALSE, ncol = 6) +
-  tm_layout(panel.labels = seq_len(raster::nlayers(landscapes)),
-            legend.outside.position = "bottom")
+  tm_facets(free.scales = FALSE, nrow = 1) +
+  tm_layout(panel.labels = 1:6, legend.outside.position = "bottom")
 ```
 
 Let's consider six fairly simple, but diverse examples:
@@ -87,7 +81,7 @@ Let's consider six fairly simple, but diverse examples:
 The example data represent different land cover categories; however, they could be any discrete values.
 Additionally, those cases are only a small subset of possible spatial arrangement, but the ideas presented below works for more and less complex cases.
 
-# Spatial represetation
+# Spatial representation
 
 One of the ways to describe the above examples is to count a number of cells for each category (this metrics is known as a composition).
 However, this representation does not contain any information about the spatial distribution of the values.
@@ -110,13 +104,14 @@ This representation shows that the second category dominates in the data (3180 p
 
 # Information theory
 
-<!-- ... -->
+The co-occurrence matrix representation is not only compact but also allows to calculate several metrics based on the information theory.
+This include **marginal entropy**, **conditional entropy**, **joint entropy**, **mutual information**, and **relative mutual information**.
 
 ## Marginal entropy [H(x)]
 
 The first metric, **marginal entropy**, represents a diversity (thematic complexity, configuration) of spatial categories.
 It is calculated as the entropy of the marginal distribution.
-The `lsm_l_ent` function allows for calculating **marginal entropy**.
+The `lsm_l_ent()` function allows for calculating **marginal entropy**.
 Its output gives a layer number (example data id), informs that the data is only of the landscape level, this metric abbreviation is `ent`, and finally it shows the resulting value.
 
 ```{r}
@@ -127,6 +122,7 @@ mar_ent
 <!-- The values can be vizualized together with spatial data using the **tmap** package. -->
 
 ```{r, echo=FALSE}
+lc_palette = c("#FFFF64", "#006400", "#966400", "#BE9600")
 tm_shape(landscapes) +
   tm_raster(palette = lc_palette, style = "cat", legend.show = FALSE) +
   tm_facets(free.scales = FALSE, ncol = 6) +
@@ -144,7 +140,7 @@ Example data 5 and 6 have the highest levels of thematic complexity due to the f
 The second metric, **conditional entropy**, represents a configurational complexity (geometric intricacy) of a spatial pattern. 
 If the value of **conditional entropy** is small, cells of one category are predominantly adjacent to only one category of cells.
 On the other hand, the high value of **conditional entropy** shows that cells of one category are adjacent to cells of many different categories.
-**Conditional entropy** can be calculated using the `lsm_l_condent` function.
+**Conditional entropy** can be calculated using the `lsm_l_condent()` function.
 
 ```{r}
 cond_ent = lsm_l_condent(landscapes)
@@ -161,16 +157,16 @@ tm_shape(landscapes) +
 ```
 
 <!-- interpretation -->
-The **conditional entropy** values are the smallest for example data 1, where most of the "green" cells are adaject to other "green" ones, and the "yellow" cells are next to other "yellow" cells, and where one category ("green") dominates the entire area.
-In example data 2, the proportion of categories is similar, however the cells configuration is less orginised and therefore the **conditional entropy** value is higher than in example data 1.
-For the next examples, the **conditional entropy** values grows with both categories proportions and their arrangement.
-This is due to a fact that diversity of categories induces configurational complexity.
+The **conditional entropy** values are the smallest for example data 1, where most of the "green" cells are adjacent to other "green" ones, and the "yellow" cells are next to other "yellow" cells, and where one category ("green") dominates the entire area.
+In example data 2, the proportion of categories is similar; however, the configuration of the cells is less organized and therefore the **conditional entropy** value is higher than in example data 1.
+For the next examples, the **conditional entropy** values grow with both categories proportions and their arrangement.
+This is due to the fact that the diversity of categories induces configurational complexity.
 
 ## Joint entropy [H(x, y)]
 
 The third metric, **joint entropy**, is an overall spatio-thematic complexity metric. 
-It represents the uncertainty in determining a category of the focus cell and the category of  the adjacent cell.
-In other words, it measures diversity of values in a co-occurence matrix -- the smaller the diversity, the larger the value of **joint entropy**.
+It represents the uncertainty in determining a category of the focus cell and the category of the adjacent cell.
+In other words, it measures diversity of values in a co-occurrence matrix -- the smaller the diversity, the larger the value of **joint entropy**.
 You can use the `lsm_l_joinent()` to calculate this metric.
 
 ```{r}
@@ -188,12 +184,12 @@ tm_shape(landscapes) +
 ```
 
 The values of **joint entropy** organize the example data from the most simple (example data 2) to the most complex (example data 6).
-However, **joint entropy** alone is not capable to fully distinguish situations with spatially aggregated values (example data 1, 3, and 5) from situations that are spatially disaggregated (example data 2, 4, 6).
+However, **joint entropy** alone is not capable to sufficiently distinguish situations with spatially aggregated values (example data 1, 3, and 5) from situations that are spatially disaggregated (example data 2, 4, 6).
 
-## Mutual information
+## Mutual information [I(y,x)]
 
 The fourth metric, **mutual information**, quantifies the information that one cell in a pair provides about the other cell in a pair.
-It disambiguates landscape pattern types characterize by the same value of an overall complexity.
+It disambiguates landscape pattern types characterized by the same value of overall complexity.
 The `lsm_l_mutinf()` function calculates **mutual information**.
 
 ```{r}
@@ -207,10 +203,10 @@ tm_shape(landscapes) +
   tm_facets(free.scales = FALSE, ncol = 6) +
   tm_layout(panel.labels = round(mut_inf$value, 2), 
             panel.label.size = 2,
-            main.title = "Mutual information [H(x)]")
+            main.title = "Mutual information [I(y,x)]")
 ```
 
-Larger values indicate that the cells of the same category are more aggregated, while the smaller values are indication of disaggregation.
+Larger values indicate that the cells of the same category are more aggregated, while the smaller values are an indication of disaggregation.
 <!-- The resulting values can be useful to differentiate between examples of similar **marginal entropy**. -->
 
 ## Relative mutual information
@@ -233,18 +229,36 @@ tm_shape(landscapes) +
             main.title = "Relative mutual information [U]")
 ```
 
-**Relative mutual information** for the example data orders them from the least aggregated (example data 2, 6), through those with medium aggregation (example data 4, 5), to the most aggregated (example data 1 and 2).
+**Relative mutual information** for the example data orders them from the least aggregated (example data 2, 6), through those with medium aggregation (example data 4, 5), to the most aggregated (example data 1 and 2), without the influence of the number or distribution of categories.
 
 # Applications
 
-<!-- order -->
-<!-- classify -->
+The direct applications of the above metrics are ordering and classifying of spatial patterns.
+Each of the presented metrics can be used alone to order the spatial data according to a different property.
+For example, values of **marginal entropy** orders by the diversity of spatial categories, while values of **relative mutual information** orders by spatial aggregation.
+Two or more of the above metrics can be a basis for spatial classification, grouping similar spatial pattern together.
+
+These basic applications can be further used for a myriad of practical purposes.
+For example, let's consider spatial data representing a land cover. 
+An area's pattern is related to many environmental characteristics and processes, such as vegetation diversity, animal distribution, or water quality. 
+Therefore, the possibility of a quantitative assessment of spatial patterns could enable a better understanding of this relationship, and allow for improvements in management and conservation of the environment. 
+
+Spatial patterns do exist in many other domains, including urban science, demography, agriculture, etc.
+Consequently, these metrics can be used to add new knowledge to these domains.
 
 # Summary
 
-<!-- landscapemetrics -->
-<!-- + the whole org -->
+Information theory provides a framework for quantification of the spatial patterns.
+This include several metrics based on the co-occurrence matrix, such as **marginal entropy**, **conditional entropy**, **joint entropy**, **mutual information**, and **relative mutual information**.
+<!-- The information theory based metrics have one important advantage over  -->
+<!--vs standard metrics-->
 
-<!-- new paper -->
-<!-- summary of the paper -->
-<!-- + the whole sil org -->
+The **landscapemetrics** R package implements these metrics as the `lsm_l_ent()` (**marginal entropy**), `lsm_l_condent()` (**conditional entropy**), `lsm_l_joinent()` (**joint entropy**), and `lsm_l_mutinf()` (**mutual information**) functions. 
+The function accepts raster data (in the form of `Raster*`, `matrix`, or `stars` objects) as an input. 
+Additional parameters include cells adjacency type (4-connected or 8-connected), type of pairs considered (ordered and unordered), and the unit in which entropy is measured (logarithm to base 2, natural logarithm, and logarithm to base 10).
+
+A complete demonstration of the spatial patterns quantification within the framework of the Information Theory is in the [Landscape Ecology]() article.
+The article shows that one-dimensional parametrizations of patterns using the information theory based measures correspond to orderings, and two-dimensional parametrizations correspond to classifications.
+These findings are based on the dataset which contains a rich variety of land cover patterns.
+Different pattern metrics are compared, and the correlation coefficients between them are calculated.
+Finally, the article shows an example of how these concepts can be used for spatial patterns classifications by grouping similar patterns into distinct regions of the parameters space.
