@@ -104,8 +104,7 @@ This representation shows that the second category dominates in the data (3180 p
 
 # Information theory
 
-The co-occurrence matrix representation is not only compact but also allows to calculate several metrics based on the information theory.
-This include **marginal entropy**, **conditional entropy**, **joint entropy**, **mutual information**, and **relative mutual information**.
+The co-occurrence matrix representation is not only compact but also allows to calculate several metrics based on the information theory applied to bivariate random variable (x,y), where x is a category of a focus cell and y is category of a cell adjacent to it. This metrics are include **marginal entropy**, **conditional entropy**, **joint entropy**, **mutual information**, and **relative mutual information**.
 
 ## Marginal entropy [H(x)]
 
@@ -188,8 +187,9 @@ However, **joint entropy** alone is not capable to sufficiently distinguish situ
 
 ## Mutual information [I(y,x)]
 
-The fourth metric, **mutual information**, quantifies the information that one cell in a pair provides about the other cell in a pair.
-It disambiguates landscape pattern types characterized by the same value of overall complexity.
+The fourth metric, **mutual information**, quantifies the information that one random variable (x) provides about another random variable (y). 
+It tells how much easier is to predict a category of an adjacent cell if the category of the focus cell is known.
+Mutual information disambiguates landscape pattern types characterized by the same value of overall complexity.
 The `lsm_l_mutinf()` function calculates **mutual information**.
 
 ```{r}
@@ -249,7 +249,7 @@ Consequently, these metrics can be used to add new knowledge to these domains.
 # Summary
 
 Information theory provides a framework for quantification of the spatial patterns.
-This include several metrics based on the co-occurrence matrix, such as **marginal entropy**, **conditional entropy**, **joint entropy**, **mutual information**, and **relative mutual information**.
+This includes several metrics based on the co-occurrence matrix, such as **marginal entropy**, **conditional entropy**, **joint entropy**, **mutual information**, and **relative mutual information**.
 <!-- The information theory based metrics have one important advantage over  -->
 <!--vs standard metrics-->
 
